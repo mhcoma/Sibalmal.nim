@@ -1,4 +1,4 @@
 # Sibalmal.nim
 Sibalmal interpreter written in Nim
 
-[Original implementation of C++](https://github.com/mhcoma/Sibalmal)
+[Original interpreter written in C++](https://github.com/mhcoma/Sibalmal)
