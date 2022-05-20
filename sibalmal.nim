@@ -30,23 +30,23 @@ proc open(inter: var Interpreter, filename: string) =
 	except IOError as e:
 		echo "I/O error: " & e.msg
 
-template c_storage(inter: var Interpreter): Deque[float] =
+template curr_storage(inter: var Interpreter): Deque[float] =
 	inter.storage[inter.storage_index]
 
 template c_front(inter: var Interpreter): float =
-	inter.c_storage.peekFirst
+	inter.curr_storage.peekFirst
 
 template c_push(inter: var Interpreter, v: float) =
-	inter.c_storage.addFirst(v)
+	inter.curr_storage.addFirst(v)
 
 template c_pop(inter: var Interpreter) =
-	inter.c_storage.popFirst
+	inter.curr_storage.popFirst
 
 template c_not_empty(inter: var Interpreter): bool =
-	inter.c_storage.len > 0
+	inter.curr_storage.len > 0
 
 template c_has_two(inter: var Interpreter): bool =
-	inter.c_storage.len > 1
+	inter.curr_storage.len > 1
 
 proc interprete(inter: var Interpreter): bool =
 	if inter.code_index >= inter.codes[inter.func_index].len:
@@ -69,7 +69,7 @@ proc interprete(inter: var Interpreter): bool =
 	if code >= ord('a') and code <= ord('z'):
 		inter.storage_index = code - 97
 	elif code >= ord('A') and code <= ord('Z'):
-		if (inter.c_storage.len > 0):
+		if inter.c_not_empty:
 			inter.storage[code - 65].addFirst(inter.c_pop)
 	elif code >= ord('0') and code <= ord('9'):
 		inter.c_push(float(code - 48))
@@ -86,10 +86,10 @@ proc interprete(inter: var Interpreter): bool =
 				inter.c_push(a)
 		of ord('.'):
 			if inter.c_has_two:
-				inter.c_push(inter.c_storage.popLast)
+				inter.c_push(inter.curr_storage.popLast)
 		of ord(','):
 			if inter.c_has_two:
-				inter.c_storage.addLast(inter.c_pop)
+				inter.curr_storage.addLast(inter.c_pop)
 		of ord('+'):
 			if inter.c_has_two:
 				let b = inter.c_pop
